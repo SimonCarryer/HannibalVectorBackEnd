@@ -6,8 +6,8 @@ app = Flask(__name__)
 
 @app.route('/movies')
 def api_root():
-    return jsonify(["Matt and Deans amazing adventures",
-    "Why did Jenny fall asleep", "Pulp Fiction"])
+    return jsonify(["Matt and Deans amazing adventures (1990)",
+    "Why did Jenny fall asleep (1990)", "Pulp Fiction (1994)"])
 
 @app.after_request
 def after_request(response):
