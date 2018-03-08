@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 
-print 'starting app'
+print('starting app')
 app = Flask(__name__)
 
 
