@@ -10,9 +10,9 @@ class bidict(dict):
              self.inverse[value] = key
 
 class MovieGetter:
-    def __init__(self, movie_to_matrix_dic, matrix):
-        movie_to_matrix_dic.index = range(len(movie_to_matrix_dic))
-        self.movie_to_matrix_dic = bidict(movie_to_matrix_dic.IMDbId.to_dict())
+    def __init__(self, movie_dataframe, matrix):
+        movie_dataframe.index = range(len(movie_dataframe))
+        self.movie_to_matrix_dic = bidict(movie_dataframe.IMDbId.to_dict())
         self.matrix = matrix
 
     def get(self, imdb_id):
@@ -25,3 +25,12 @@ class MovieGetter:
         best_list = [i for i in np.argsort(cosine_similarity(best_movie, self.matrix))[0][::-1] if self.movie_to_matrix_dic[i] not in [imdb_1, imdb_2]][:10]
 
         return self.movie_to_matrix_dic[best_list[0]]
+
+class MovieSearcher:
+    def __init__(self, movie_dataframe):        
+        movie_dataframe.index = range(len(movie_dataframe))
+        self.dataframe = movie_dataframe
+
+    def search(self, search_string):
+        matches = self.dataframe[self.dataframe.title.str.lower().str.contains(search_string.lower())]
+        return [i for i in matches.to_dict('index').values()]
