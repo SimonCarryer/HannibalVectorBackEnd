@@ -2,11 +2,12 @@ from flask import Flask, jsonify, request
 from util.process_pickle import load_compressed_pickled_object
 from util.lookup import MovieGetter
 
-print('starting app')
-
 print('gonna download the matrix')
 matrix = load_compressed_pickled_object("https://s3.amazonaws.com/hannibal-vector/hanibalVectorModel-09-03-2018.gz")
 print('got a matrix with shape %d, %d' % matrix.shape)
+
+app = Flask(__name__)
+
 
 print('gonna download the movie_to_matrix_dic')
 #movie_to_matrix_dic = load_compressed_pickled_object("TOBEREPLACED")
