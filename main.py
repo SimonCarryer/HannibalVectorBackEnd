@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from util.process_pickle import load_compressed_pickled_object
-from util.lookup import MovieGetter
+from util.lookup import MovieGetter, MovieSearcher
 
 print('starting app')
 
@@ -8,18 +8,19 @@ print('gonna download the matrix')
 matrix = load_compressed_pickled_object("https://s3.amazonaws.com/hannibal-vector/hanibalVectorModel-09-03-2018.gz")
 print('got a matrix with shape %d, %d' % matrix.shape)
 
-print('gonna download the movie_to_matrix_dic')
-movie_to_matrix_dic = load_compressed_pickled_object("https://s3.amazonaws.com/hannibal-vector/hanibalVectorIndex-09-03-2018.gz")
-print('got a movie_to_matrix_dic')
+print('gonna download the movie_dataframe')
+movie_dataframe = load_compressed_pickled_object("https://s3.amazonaws.com/hannibal-vector/hanibalVectorIndex-09-03-2018.gz")
+print('got a movie_dataframe')
 
-movie_getter = MovieGetter(movie_to_matrix_dic, matrix)
+movie_getter = MovieGetter(movie_dataframe, matrix)
+movie_searcher = MovieSearcher(movie_dataframe)
 
 app = Flask(__name__)
 
 @app.route('/movies')
 def api_root():
-    return jsonify(["Matt and Deans amazing adventures (1990)",
-    "Why did Jenny fall asleep (1990)", "Pulp Fiction (1994)"])
+    query = request.args.get('query')
+    return jsonify(movie_searcher.search(query))
 
 @app.route('/add')
 def addmovie():
