@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from util.process_pickle import load_compressed_pickled_object
 from util.lookup import MovieGetter, MovieSearcher
-from util.validation import MovieInputValidator
+from util.validation import MovieInputValidator, SearchInputValidator
 
 print('starting app')
 
@@ -16,11 +16,14 @@ print('got a movie_dataframe')
 movie_getter = MovieGetter(movie_dataframe, matrix)
 movie_searcher = MovieSearcher(movie_dataframe)
 movie_validator =  MovieInputValidator(list(movie_dataframe.IMDbId))
+search_validator = SearchInputValidator()
 
 app = Flask(__name__)
 
 @app.route('/movies')
 def api_root():
+    if not search_validator.validate(request):
+        return jsonify(search_validator.errors()), 400
     query = request.args.get('query')
     return jsonify(movie_searcher.search(query))
 

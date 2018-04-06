@@ -13,3 +13,17 @@ class MovieInputValidator:
 
     def errors(self):
         return self.validator.errors
+
+
+class SearchInputValidator:
+    def __init__(self):
+        schema = {'query': {'type': 'string', 'required': True}
+            }
+        self.validator = Validator(schema)
+
+    def validate(self, request):
+        return self.validator.validate(request.args)
+
+    def errors(self):
+        return self.validator.errors
+
