@@ -19,12 +19,10 @@ class MovieGetter:
         index = self.movie_to_matrix_dic.inverse[imdb_id]
         return self.matrix[index].reshape(1, -1)
     
-    def get_closest(self, movie1, movie2, imdb_1, imdb_2):
-        best_movie = movie1 + movie2
+    def get_closest(self, movie, imdb_1, imdb_2):
         print('Got some values %s %s' % (imdb_1, imdb_2))
-        best_list = [i for i in np.argsort(cosine_similarity(best_movie, self.matrix))[0][::-1] if self.movie_to_matrix_dic[i] not in [imdb_1, imdb_2]][:10]
-
-        return self.movie_to_matrix_dic[best_list[0]]
+        closest_movie = [i for i in np.argsort(cosine_similarity(movie, self.matrix))[0][::-1] if self.movie_to_matrix_dic[i] not in [imdb_1, imdb_2]][:10]
+        return self.movie_to_matrix_dic[closest_movie[0]]	
 
 class MovieSearcher:
     def __init__(self, movie_dataframe):        

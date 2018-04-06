@@ -28,8 +28,19 @@ def addmovie():
     imdb_id_2 = request.args.get('movie_imdb_2')
     movie1 = movie_getter.get(imdb_id_1)
     movie2 = movie_getter.get(imdb_id_2)
-    closest = movie_getter.get_closest(movie1, movie2, imdb_id_1, imdb_id_2)
+    best_movie = movie1 + movie2
+    closest = movie_getter.get_closest(best_movie, imdb_id_1, imdb_id_2)
     return jsonify(closest)
+
+@app.route('/subtract')
+def subtractmovie():  
+    imdb_id_1 = request.args.get('movie_imdb_1')
+    imdb_id_2 = request.args.get('movie_imdb_2')
+    movie1 = movie_getter.get(imdb_id_1)
+    movie2 = movie_getter.get(imdb_id_2)
+    best_movie = movie1 - movie2
+    closest = movie_getter.get_closest(best_movie, imdb_id_1, imdb_id_2)
+    return jsonify(closest)  
 
 @app.after_request
 def after_request(response):
