@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from util.process_pickle import load_compressed_pickled_object
 from util.lookup import MovieGetter, MovieSearcher
+from util.validation import MovieInputValidator
 
 print('starting app')
 
@@ -14,6 +15,7 @@ print('got a movie_dataframe')
 
 movie_getter = MovieGetter(movie_dataframe, matrix)
 movie_searcher = MovieSearcher(movie_dataframe)
+movie_validator =  MovieInputValidator(list(movie_dataframe.IMDbId))
 
 app = Flask(__name__)
 
@@ -24,23 +26,27 @@ def api_root():
 
 @app.route('/add')
 def addmovie():
+    if not movie_validator.validate(request):
+        return jsonify(movie_validator.errors()), 400
     imdb_id_1 = request.args.get('movie_imdb_1')
     imdb_id_2 = request.args.get('movie_imdb_2')
     movie1 = movie_getter.get(imdb_id_1)
     movie2 = movie_getter.get(imdb_id_2)
     best_movie = movie1 + movie2
     closest = movie_getter.get_closest(best_movie, imdb_id_1, imdb_id_2)
-    return jsonify(closest)
+    return jsonify(closest), 200
 
 @app.route('/subtract')
-def subtractmovie():  
+def subtractmovie():
+    if not movie_validator.validate(request):
+        return jsonify(movie_validator.errors()), 400
     imdb_id_1 = request.args.get('movie_imdb_1')
     imdb_id_2 = request.args.get('movie_imdb_2')
     movie1 = movie_getter.get(imdb_id_1)
     movie2 = movie_getter.get(imdb_id_2)
     best_movie = movie1 - movie2
     closest = movie_getter.get_closest(best_movie, imdb_id_1, imdb_id_2)
-    return jsonify(closest)  
+    return jsonify(closest), 200
 
 @app.after_request
 def after_request(response):
